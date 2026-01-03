@@ -1,11 +1,13 @@
 const mysql = require('mysql2');
+require('dotenv').config();
+ 
 
 // Създаваме връзката
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '1234', 
-    database: 'HabitTracker'
+    host: process.env.HOST_URL,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 });
 
 // Свързваме се
