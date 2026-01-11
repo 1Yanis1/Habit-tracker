@@ -26,7 +26,20 @@ const habitService = {
     createNewHabit: (data, callback) => {
         const sql = 'INSERT INTO habit (User_ID, Description, Frequency_type, Amount, Created_date) VALUES (?, ?, ?, ?, CURDATE())';
         db.query(sql, [data.user_id, data.description, data.frequency, data.amount], callback);
+    },
+
+    // Изтриване на навик
+    deleteHabit: (id, callback) => {
+        const sql = 'DELETE FROM habit WHERE Habit_ID = ?';
+        db.query(sql, [id], callback);
+    },
+
+    // Актуализиране на навик
+    updateHabit: (id,data, callback) => {
+        const sql = 'UPDATE habit SET Description = ?, Frequency_type = ?,Amount = ? WHERE Habit_ID = ?';
+        db.query(sql, [data.description, data.frequency, data.amount, id], callback);
     }
 };
+
 
 module.exports = habitService;
