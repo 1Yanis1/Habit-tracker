@@ -5,14 +5,14 @@ const habitService = {
     getAllHabitsSummary: (callback) => {
         const sql = `
             SELECT 
+                h.Habit_ID, 
                 h.Description AS Habit, 
                 h.Amount AS Amount,
-                GROUP_CONCAT(DISTINCT c.Firstname SEPARATOR ', ') AS Users,
-                h.Frequency_type AS Frequency
+                GROUP_CONCAT(DISTINCT c.Firstname SEPARATOR ', ') AS Users
             FROM habit h
             JOIN customer c ON h.User_ID = c.Customer_ID
-            GROUP BY h.Description, h.Amount, h.Frequency_type
-        `;
+            GROUP BY h.Habit_ID, h.Description, h.Amount  
+`;
         db.query(sql, callback);
     },
 

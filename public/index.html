@@ -3,14 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <title>Habit Tracker</title>
-    <style>
-        body { font-family: sans-serif; text-align: center; margin-top: 50px; }
-        button { padding: 10px 20px; cursor: pointer; margin: 5px; }
-    </style>
 </head>
 <body>
     <h1>Habit Tracker</h1>
+    
     <a href="/customers"><button>View Customers (JSON)</button></a>
     <a href="/habits"><button>View Habits (JSON)</button></a>
+    
+    <hr>
+
+    <div id="habits-container">
+        <p>Зареждане на навиците...</p>
+    </div>
+
+    <script>
+        // Функция за автоматично зареждане на списъка
+        function loadHabits() {
+            fetch('/habits')
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('habits-container');
+                    
+                    // Ако има грешка в SQL, ще я изпише тук
+                    if (data.error) {
+                        container.innerHTML = `<p style="color:red">Грешка: ${data.error}</p>`;
+                        return;
+                    }
+
+                    let html = '';
+                    data.forEach(h => {
+                        html += `
+                            <div style="border-bottom: 1px solid #ccc; padding: 10px;">
+                                <strong>${h.Habit}</strong> - ${h.Amount} <br>
+                                <small>Потребители: ${h.Users}</small> <br>
+                                <button onclick="editHabit(${h.Habit_ID}, '${h.Habit}')">Редактирай</button>
+                                <button onclick="deleteHabit(${h.Habit_ID})">Изтрий</button>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html || '<p>Няма намерени навици.</p>';
+                });
+        }
+
+        // Функция за ИЗТРИВАНЕ
+        function deleteHabit(id) {
+            if (confirm("Сигурни ли сте?")) {
+                fetch('/habits/' + id, { method: 'DELETE' })
+                    .then(() => loadHabits());
+            }
+        }
+
+        // Функция за РЕДАКТИРАНЕ
+        function editHabit(id, oldName) {
+            const newName = prompt("Ново име на навика:", oldName);
+            if (newName) {
+                fetch('/habits/' + id, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        description: newName, 
+                        amount: 1, 
+                        frequency: 'Daily' 
+                    })
+                }).then(() => loadHabits());
+            }
+        }
+
+        // Стартираме зареждането при отваряне на страницата
+        loadHabits();
+    </script>
 </body>
 </html>
