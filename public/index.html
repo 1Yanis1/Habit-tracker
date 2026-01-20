@@ -2,75 +2,329 @@
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>Habit Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Моите Навици</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        h1 { margin: 0; color: #444; font-size: 28px; }
+
+        .add-habit-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            border: 1px solid #e9ecef;
+        }
+
+        input, select {
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            flex-grow: 1;
+            font-size: 14px;
+        }
+
+        button {
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .add-btn { background-color: #28a745; color: white; }
+        .add-btn:hover { background-color: #218838; transform: translateY(-1px); }
+
+        .logout-btn { background-color: #6c757d; color: white; }
+        .logout-btn:hover { background-color: #5a6268; }
+
+        .edit-btn { background-color: #ffc107; color: #212529; padding: 8px 12px; font-size: 13px; }
+        .edit-btn:hover { background-color: #e0a800; }
+
+        .delete-btn { background-color: #dc3545; color: white; padding: 8px 12px; font-size: 13px; margin-left: 5px; }
+        .delete-btn:hover { background-color: #c82333; }
+
+        .habit-card {
+            background: #fff;
+            border: 1px solid #eee;
+            padding: 18px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            transition: transform 0.2s;
+        }
+        .habit-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+        .habit-info strong { font-size: 1.2em; color: #2d3748; display: block; margin-bottom: 4px; }
+        .habit-info span { color: #718096; font-size: 0.95em; background: #edf2f7; padding: 2px 8px; border-radius: 4px; }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 400px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            text-align: left;
+        }
+
+        .modal-buttons { margin-top: 20px; text-align: right; display: flex; justify-content: flex-end; gap: 10px; }
+        .cancel-btn { background: #e2e6ea; color: #333; }
+        .save-btn { background: #007bff; color: white; }
+        
+        .modal-content h3 { margin-top: 0; color: #333; text-align: center; }
+        .modal-text { text-align: center; color: #666; margin-bottom: 20px; }
+    </style>
 </head>
 <body>
-    <h1>Habit Tracker</h1>
-    
-    <a href="/customers"><button>View Customers (JSON)</button></a>
-    <a href="/habits"><button>View Habits (JSON)</button></a>
-    
-    <hr>
 
-    <div id="habits-container">
-        <p>Зареждане на навиците...</p>
+    <div class="container">
+        <header>
+            <h1>📅 Моите Навици</h1>
+            <button onclick="logout()" class="logout-btn">🚪 Изход</button>
+        </header>
+
+        <div class="add-habit-form">
+            <input type="text" id="habit-desc" placeholder="Какво искаш да правиш? (напр. Фитнес)" required>
+            <select id="habit-freq">
+                <option value="Daily">Ежедневно</option>
+                <option value="Weekly">Седмично</option>
+                <option value="Monthly">Месечно</option>
+            </select>
+            <input type="number" id="habit-amount" placeholder="Пъти?" value="1" style="max-width: 80px;">
+            <button class="add-btn" onclick="addHabit()">➕ Добави</button>
+        </div>
+
+        <div id="habits-container">
+            <p style="text-align:center;">Зареждане...</p>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="margin-top:0;">✏️ Редакция</h2>
+            <input type="hidden" id="edit-id">
+            
+            <label>Описание:</label>
+            <input type="text" id="edit-desc" style="width: 100%; margin-bottom: 10px; box-sizing: border-box;">
+            
+            <label>Честота:</label>
+            <select id="edit-freq" style="width: 100%; margin-bottom: 10px; box-sizing: border-box;">
+                <option value="Daily">Ежедневно</option>
+                <option value="Weekly">Седмично</option>
+                <option value="Monthly">Месечно</option>
+            </select>
+
+            <label>Количество:</label>
+            <input type="number" id="edit-amount" style="width: 100%; box-sizing: border-box;">
+
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="closeEditModal()">Откажи</button>
+                <button class="save-btn" onclick="saveEdit()">Запази</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Изтриване на навик</h3>
+            <p class="modal-text">Сигурни ли сте, че искате да изтриете този навик?</p>
+            <div class="modal-buttons" style="justify-content: center;">
+                <button class="cancel-btn" onclick="closeDeleteModal()">Откажи</button>
+                <button class="delete-btn" onclick="confirmDelete()">🗑️ Да, изтрий</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Функция за автоматично зареждане на списъка
+        let habitIdToDelete = null;
+
+        document.addEventListener('DOMContentLoaded', loadHabits);
+
         function loadHabits() {
             fetch('/habits')
-                .then(res => res.json())
+                .then(res => {
+                    if (res.status === 401) {
+                        window.location.href = '/login.html'; 
+                        return null;
+                    }
+                    return res.json();
+                })
                 .then(data => {
+                    if (!data) return;
+
                     const container = document.getElementById('habits-container');
                     
-                    // Ако има грешка в SQL, ще я изпише тук
                     if (data.error) {
                         container.innerHTML = `<p style="color:red">Грешка: ${data.error}</p>`;
                         return;
                     }
 
+                    if (data.length === 0) {
+                        container.innerHTML = '<p style="text-align:center; color:#888;">Няма намерени навици. Добави първия!</p>';
+                        return;
+                    }
+
                     let html = '';
                     data.forEach(h => {
+                        const habitName = h.Description || h.Habit;
+                        const freq = h.Frequency_type || 'Daily';
+                        const amount = h.Amount || 1;
+
                         html += `
-                            <div style="border-bottom: 1px solid #ccc; padding: 10px;">
-                                <strong>${h.Habit}</strong> - ${h.Amount} <br>
-                                <small>Потребители: ${h.Users}</small> <br>
-                                <button onclick="editHabit(${h.Habit_ID}, '${h.Habit}')">Редактирай</button>
-                                <button onclick="deleteHabit(${h.Habit_ID})">Изтрий</button>
+                            <div class="habit-card">
+                                <div class="habit-info">
+                                    <strong>${habitName}</strong>
+                                    <span>${freq}</span> • <span>${amount} пъти</span>
+                                </div>
+                                <div class="actions">
+                                    <button class="edit-btn" onclick="openEditModal(${h.Habit_ID}, '${habitName}', '${freq}', ${amount})">
+                                        ✏️ Редактирай
+                                    </button>
+                                    <button class="delete-btn" onclick="askDelete(${h.Habit_ID})">
+                                        🗑️ Изтрий
+                                    </button>
+                                </div>
                             </div>
                         `;
                     });
-                    container.innerHTML = html || '<p>Няма намерени навици.</p>';
+                    container.innerHTML = html;
+                })
+                .catch(err => {
+                    console.error("Грешка:", err);
+                    document.getElementById('habits-container').innerHTML = '<p style="color:red">Грешка при връзката със сървъра.</p>';
                 });
         }
 
-        // Функция за ИЗТРИВАНЕ
-        function deleteHabit(id) {
-            if (confirm("Сигурни ли сте?")) {
-                fetch('/habits/' + id, { method: 'DELETE' })
-                    .then(() => loadHabits());
-            }
+        function addHabit() {
+            const desc = document.getElementById('habit-desc').value;
+            const freq = document.getElementById('habit-freq').value;
+            const amount = document.getElementById('habit-amount').value;
+
+            if(!desc) return alert("Моля напишете име!");
+
+            fetch('/habits', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description: desc, frequency: freq, amount: amount })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.error) alert(data.error);
+                else {
+                    document.getElementById('habit-desc').value = '';
+                    loadHabits();
+                }
+            });
         }
 
-        // Функция за РЕДАКТИРАНЕ
-        function editHabit(id, oldName) {
-            const newName = prompt("Ново име на навика:", oldName);
-            if (newName) {
-                fetch('/habits/' + id, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        description: newName, 
-                        amount: 1, 
-                        frequency: 'Daily' 
-                    })
-                }).then(() => loadHabits());
-            }
+        function openEditModal(id, description, frequency, amount) {
+            document.getElementById('editModal').style.display = 'flex';
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-desc').value = description;
+            document.getElementById('edit-freq').value = frequency;
+            document.getElementById('edit-amount').value = amount;
         }
 
-        // Стартираме зареждането при отваряне на страницата
-        loadHabits();
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        function saveEdit() {
+            const id = document.getElementById('edit-id').value;
+            const newDesc = document.getElementById('edit-desc').value;
+            const newFreq = document.getElementById('edit-freq').value;
+            const newAmount = document.getElementById('edit-amount').value;
+
+            fetch('/habits/' + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    description: newDesc,
+                    frequency: newFreq,
+                    amount: newAmount
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.error) {
+                    alert("Грешка: " + data.error);
+                } else {
+                    closeEditModal();
+                    loadHabits();
+                }
+            });
+        }
+
+        function askDelete(id) {
+            habitIdToDelete = id;
+            document.getElementById('deleteModal').style.display = 'flex';
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            habitIdToDelete = null;
+        }
+
+        function confirmDelete() {
+            if (!habitIdToDelete) return;
+            
+            fetch('/habits/' + habitIdToDelete, { method: 'DELETE' })
+                .then(() => {
+                    closeDeleteModal();
+                    loadHabits();
+                });
+        }
+
+        function logout() {
+            fetch('/logout').then(() => window.location.href = '/login.html');
+        }
     </script>
 </body>
 </html>
