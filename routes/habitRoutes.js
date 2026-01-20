@@ -35,4 +35,4 @@ router.put('/habits/:id', authenticateToken, (req, res) => {
     });
 });
 
-module.exports = router;
+module.exports = router;    
