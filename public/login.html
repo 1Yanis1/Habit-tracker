@@ -4,84 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход в Habit Tracker</title>
-    <style>
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100vh;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .container {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            width: 350px;
-            text-align: center;
-        }
-
-        h2 {
-            color: #333;
-            margin-bottom: 1.5rem;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            display: inline-block;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box; 
-            font-size: 14px;
-        }
-
-        button {
-            background-color: #667eea;
-            color: white;
-            padding: 12px 20px;
-            margin: 15px 0 10px 0;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-
-        button:hover {
-            background-color: #5a6fd1;
-        }
-
-        .toggle-link {
-            color: #667eea;
-            cursor: pointer;
-            text-decoration: underline;
-            font-size: 14px;
-        }
-
-        .toggle-link:hover {
-            color: #764ba2;
-        }
-
-        .error-msg {
-            color: red;
-            font-size: 14px;
-            margin-top: 10px;
-            display: none;
-        }
-
-        
-        #register-form {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="static/login.css">
 </head>
 <body>
 
@@ -104,67 +27,7 @@
             <div id="reg-error" class="error-msg"></div>
         </div>
     </div>
-
-    <script>
-        
-        function toggleForms() {
-            const loginForm = document.getElementById('login-form');
-            const regForm = document.getElementById('register-form');
-            
-            if (loginForm.style.display === 'none') {
-                loginForm.style.display = 'block';
-                regForm.style.display = 'none';
-            } else {
-                loginForm.style.display = 'none';
-                regForm.style.display = 'block';
-            }
-        }
-
-        function register() {
-            const username = document.getElementById('reg-username').value;
-            const password = document.getElementById('reg-password').value;
-            const errorDiv = document.getElementById('reg-error');
-
-            fetch('/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    errorDiv.innerText = data.error;
-                    errorDiv.style.display = 'block';
-                } else {
-                    alert('Успешна регистрация! Сега можеш да влезеш.');
-                    toggleForms(); 
-                }
-            });
-        }
-
-       
-        function login() {
-            const username = document.getElementById('login-username').value;
-            const password = document.getElementById('login-password').value;
-            const errorDiv = document.getElementById('login-error');
-
-            fetch('/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    errorDiv.innerText = data.error;
-                    errorDiv.style.display = 'block';
-                } else {
-                    
-                    window.location.href = '/'; 
-                }
-            });
-        }
-    </script>
+    <script src="static/login.js"></script>
 
 </body>
 </html>

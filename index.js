@@ -13,6 +13,7 @@ app.use(express.static('public'));
 app.use(habitRoutes);
 app.use(authRoutes);
 
+
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
