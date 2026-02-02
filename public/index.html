@@ -21,32 +21,32 @@
                 <option value="Weekly">Седмично</option>
                 <option value="Monthly">Месечно</option>
             </select>
-            <input type="number" id="habit-amount" placeholder="Пъти?" value="1" style="max-width: 80px;">
+            <input type="number" id="habit-amount" class="input-amount" placeholder="Пъти?" value="1">
             <button class="add-btn" onclick="addHabit()">➕ Добави</button>
         </div>
 
         <div id="habits-container">
-            <p style="text-align:center;">Зареждане...</p>
+            <p class="loading-text">Зареждане...</p>
         </div>
     </div>
 
     <div id="editModal" class="modal-overlay">
         <div class="modal-content">
-            <h2 style="margin-top:0;">✏️ Редакция</h2>
+            <h2 class="modal-title">✏️ Редакция</h2>
             <input type="hidden" id="edit-id">
             
             <label>Описание:</label>
-            <input type="text" id="edit-desc" style="width: 100%; margin-bottom: 10px; box-sizing: border-box;">
+            <input type="text" id="edit-desc" class="modal-input">
             
             <label>Честота:</label>
-            <select id="edit-freq" style="width: 100%; margin-bottom: 10px; box-sizing: border-box;">
+            <select id="edit-freq" class="modal-input">
                 <option value="Daily">Ежедневно</option>
                 <option value="Weekly">Седмично</option>
                 <option value="Monthly">Месечно</option>
             </select>
 
             <label>Количество:</label>
-            <input type="number" id="edit-amount" style="width: 100%; box-sizing: border-box;">
+            <input type="number" id="edit-amount" class="modal-input">
 
             <div class="modal-buttons">
                 <button class="cancel-btn" onclick="closeEditModal()">Откажи</button>
@@ -57,14 +57,15 @@
 
     <div id="deleteModal" class="modal-overlay">
         <div class="modal-content">
-            <h3>Изтриване на навик</h3>
+            <h3 class="modal-title">Изтриване на навик</h3>
             <p class="modal-text">Сигурни ли сте, че искате да изтриете този навик?</p>
-            <div class="modal-buttons" style="justify-content: center;">
+            <div class="modal-buttons centered">
                 <button class="cancel-btn" onclick="closeDeleteModal()">Откажи</button>
                 <button class="delete-btn" onclick="confirmDelete()">🗑️ Да, изтрий</button>
             </div>
         </div>
     </div>
+
     <script src="static/script.js"></script>
 </body>
 </html>
