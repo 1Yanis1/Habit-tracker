@@ -1,16 +1,19 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const app = express();
-const habitRoutes = require('./routes/habitRoutes'); // Вземаме подредените маршрути
 
-// Настройки (Middleware)
+const habitRoutes = require('./routes/habitRoutes');
+const authRoutes = require('./routes/authRoutes');
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public')); // За твоя index.html
+app.use(cookieParser());
+app.use(express.static('public'));
 
-// Използваме маршрутите
 app.use(habitRoutes);
+app.use(authRoutes);
 
-// Начална страница (вече я сервираме от public/index.html)
+
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });

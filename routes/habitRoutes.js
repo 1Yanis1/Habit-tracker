@@ -1,32 +1,25 @@
 const express = require('express');
 const router = express.Router();
-const habitService = require('../services/habitServices'); 
+const habitService = require('../services/habitServices');
+const authenticateToken = require('../middleware/authMiddleware');
 
-// 1. Маршрут за навиците (вече го имаш)
-router.get('/habits', (req, res) => {
-    habitService.getAllHabitsSummary((err, results) => {
+router.get('/habits', authenticateToken, (req, res) => {
+    const userId = req.user.id;
+    habitService.getHabitsByUserId(userId, (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(results);
     });
 });
 
-// 2. НОВИЯТ Маршрут за клиентите - ДОБАВИ ГО ТУК
-router.get('/customers', (req, res) => {
-    habitService.getAllCustomers((err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json(results);
-    });
-});
-
-// 3. Маршрут за добавяне (ако го имаш)
-router.post('/habits', (req, res) => {
-    habitService.createNewHabit(req.body, (err, result) => {
+router.post('/habits', authenticateToken, (req, res) => {
+    const userId = req.user.id;
+    habitService.createNewHabit(req.body, userId, (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: 'Habit added!', habitId: result.insertId });
     });
 });
 
-router.delete('/habits/:id', (req, res) => {
+router.delete('/habits/:id', authenticateToken, (req, res) => {
     const habitID = req.params.id;
     habitService.deleteHabit(habitID, (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -34,7 +27,7 @@ router.delete('/habits/:id', (req, res) => {
     });
 });
 
-router.put('/habits/:id', (req, res) => {
+router.put('/habits/:id', authenticateToken, (req, res) => {
     const habitID = req.params.id;
     habitService.updateHabit(habitID, req.body, (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -42,4 +35,4 @@ router.put('/habits/:id', (req, res) => {
     });
 });
 
-module.exports = router;
+module.exports = router;    

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в Habit Tracker</title>
+    <link rel="stylesheet" href="static/login.css">
+</head>
+<body>
+
+    <div class="container">
+        <div id="login-form">
+            <h2>Вход</h2>
+            <input type="text" id="login-username" placeholder="Потребителско име" required>
+            <input type="password" id="login-password" placeholder="Парола" required>
+            <button onclick="login()">Влез</button>
+            <p>Нямаш акаунт? <span class="toggle-link" onclick="toggleForms()">Регистрирай се</span></p>
+            <div id="login-error" class="error-msg"></div>
+        </div>
+
+        <div id="register-form">
+            <h2>Регистрация</h2>
+            <input type="text" id="reg-username" placeholder="Избери потребителско име" required>
+            <input type="password" id="reg-password" placeholder="Избери парола" required>
+            <button onclick="register()">Регистрирай ме</button>
+            <p>Имаш акаунт? <span class="toggle-link" onclick="toggleForms()">Влез тук</span></p>
+            <div id="reg-error" class="error-msg"></div>
+        </div>
+    </div>
+    <script src="static/login.js"></script>
+
+</body>
+</html>

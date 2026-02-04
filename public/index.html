@@ -2,15 +2,70 @@
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>Habit Tracker</title>
-    <style>
-        body { font-family: sans-serif; text-align: center; margin-top: 50px; }
-        button { padding: 10px 20px; cursor: pointer; margin: 5px; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Моите Навици</title>
+    <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
-    <h1>Habit Tracker</h1>
-    <a href="/customers"><button>View Customers (JSON)</button></a>
-    <a href="/habits"><button>View Habits (JSON)</button></a>
+
+    <div class="container">
+        <header>
+            <h1>📅 Моите Навици</h1>
+            <button onclick="logout()" class="logout-btn">🚪 Изход</button>
+        </header>
+
+        <div class="add-habit-form">
+            <input type="text" id="habit-desc" placeholder="Какво искаш да правиш? (напр. Фитнес)" required>
+            <select id="habit-freq">
+                <option value="Daily">Ежедневно</option>
+                <option value="Weekly">Седмично</option>
+                <option value="Monthly">Месечно</option>
+            </select>
+            <input type="number" id="habit-amount" class="input-amount" placeholder="Пъти?" value="1">
+            <button class="add-btn" onclick="addHabit()">➕ Добави</button>
+        </div>
+
+        <div id="habits-container">
+            <p class="loading-text">Зареждане...</p>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="modal-title">✏️ Редакция</h2>
+            <input type="hidden" id="edit-id">
+            
+            <label>Описание:</label>
+            <input type="text" id="edit-desc" class="modal-input">
+            
+            <label>Честота:</label>
+            <select id="edit-freq" class="modal-input">
+                <option value="Daily">Ежедневно</option>
+                <option value="Weekly">Седмично</option>
+                <option value="Monthly">Месечно</option>
+            </select>
+
+            <label>Количество:</label>
+            <input type="number" id="edit-amount" class="modal-input">
+
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="closeEditModal()">Откажи</button>
+                <button class="save-btn" onclick="saveEdit()">Запази</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="modal-title">Изтриване на навик</h3>
+            <p class="modal-text">Сигурни ли сте, че искате да изтриете този навик?</p>
+            <div class="modal-buttons centered">
+                <button class="cancel-btn" onclick="closeDeleteModal()">Откажи</button>
+                <button class="delete-btn" onclick="confirmDelete()">🗑️ Да, изтрий</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="static/script.js"></script>
 </body>
 </html>
