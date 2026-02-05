@@ -19,29 +19,29 @@ const authService = {
     },
 
     
-    loginUser: (username, plainPassword, callback) => {
-        
-        const sql = 'SELECT * FROM users WHERE username = ?';
-        db.query(sql, [username], (err, results) => {
-            if (err) return callback(err);
-            if (results.length === 0) return callback(null, false); 
-
-            const user = results[0];
-            const storedHash = user.password; 
-
+        loginUser: (username, plainPassword, callback) => {
             
-            bcrypt.compare(plainPassword, storedHash, (err, isMatch) => {
+            const sql = 'SELECT * FROM users WHERE username = ?';
+            db.query(sql, [username], (err, results) => {
                 if (err) return callback(err);
+                if (results.length === 0) return callback(null, false); 
+
+                const user = results[0];
+                const storedHash = user.password; 
+
                 
-                if (isMatch) {
+                bcrypt.compare(plainPassword, storedHash, (err, isMatch) => {
+                    if (err) return callback(err);
                     
-                    callback(null, user);
-                } else {
-                    
-                    callback(null, false);
-                }
+                    if (isMatch) {
+                        
+                        callback(null, user);
+                    } else {
+                        
+                        callback(null, false);
+                    }
+                });
             });
-        });
     }
 };
 

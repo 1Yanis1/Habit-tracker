@@ -4,50 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Моите Навици</title>
-    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
 
     <div class="container">
         <header>
-            <h1>📅 Моите Навици</h1>
-            <button onclick="logout()" class="logout-btn">🚪 Изход</button>
+            <div class="header-left">
+                <h1>📅 Моите Навици</h1>
+            </div>
+            <div class="header-right">
+                <button onclick="toggleAddForm()" class="btn-toggle-add">➕ Нов Навик</button>
+                <a href="admin.html" id="admin-btn" class="admin-link hidden">🛡️ Админ</a>
+                <button onclick="logout()" class="logout-btn">🚪 Изход</button>
+            </div>
         </header>
 
-        <div class="add-habit-form">
-            <input type="text" id="habit-desc" placeholder="Какво искаш да правиш? (напр. Фитнес)" required>
+        <div id="add-habit-section" class="add-habit-form hidden">
+            <div class="input-group">
+                <input type="text" id="habit-name" placeholder="Какво ще правим днес?">
+                <div class="quick-suggestions">
+                    <span onclick="setHabit('💪 Фитнес')">💪 Фитнес</span>
+                    <span onclick="setHabit('💧 Вода')">💧 Вода</span>
+                    <span onclick="setHabit('📚 Книги')">📚 Книги</span>
+                </div>
+            </div>
+
             <select id="habit-freq">
                 <option value="Daily">Ежедневно</option>
                 <option value="Weekly">Седмично</option>
-                <option value="Monthly">Месечно</option>
             </select>
-            <input type="number" id="habit-amount" class="input-amount" placeholder="Пъти?" value="1">
-            <button class="add-btn" onclick="addHabit()">➕ Добави</button>
+            
+            <input type="number" id="habit-amount" class="input-amount" value="1" min="1">
+            
+            <button class="btn-add" onclick="addHabit()">Запази</button>
         </div>
 
-        <div id="habits-container">
-            <p class="loading-text">Зареждане...</p>
+        <div id="habits-container"></div>
+    </div>
+
+    <div id="chatbot-launcher" onclick="toggleChatbot()">💬</div>
+
+    <div id="chatbot-window" class="hidden">
+        <div id="chatbot-header">
+            <span>🤖 ChatBot</span>
+            <button onclick="toggleChatbot()">✖</button>
+        </div>
+        <div id="chatbot-messages">
+            <div class="bot-msg">Здравей! Аз съм твоят ChatBot. Напиши "идеи", ако искаш предложения за нови навици!</div>
+        </div>
+        <div id="chatbot-input-area">
+            <input type="text" id="chat-input" placeholder="Пиши тук..." onkeypress="if(event.key==='Enter') sendChatMsg()">
+            <button onclick="sendChatMsg()">🚀</button>
         </div>
     </div>
 
     <div id="editModal" class="modal-overlay">
         <div class="modal-content">
-            <h2 class="modal-title">✏️ Редакция</h2>
+            <h2>✏️ Редакция</h2>
             <input type="hidden" id="edit-id">
-            
-            <label>Описание:</label>
             <input type="text" id="edit-desc" class="modal-input">
-            
-            <label>Честота:</label>
             <select id="edit-freq" class="modal-input">
                 <option value="Daily">Ежедневно</option>
                 <option value="Weekly">Седмично</option>
-                <option value="Monthly">Месечно</option>
             </select>
-
-            <label>Количество:</label>
             <input type="number" id="edit-amount" class="modal-input">
-
             <div class="modal-buttons">
                 <button class="cancel-btn" onclick="closeEditModal()">Откажи</button>
                 <button class="save-btn" onclick="saveEdit()">Запази</button>
@@ -57,15 +78,14 @@
 
     <div id="deleteModal" class="modal-overlay">
         <div class="modal-content">
-            <h3 class="modal-title">Изтриване на навик</h3>
-            <p class="modal-text">Сигурни ли сте, че искате да изтриете този навик?</p>
-            <div class="modal-buttons centered">
+            <h3>Изтриване?</h3>
+            <div class="modal-buttons">
                 <button class="cancel-btn" onclick="closeDeleteModal()">Откажи</button>
-                <button class="delete-btn" onclick="confirmDelete()">🗑️ Да, изтрий</button>
+                <button class="delete-btn" onclick="confirmDelete()">🗑️ Изтрий</button>
             </div>
         </div>
     </div>
 
-    <script src="static/script.js"></script>
+    <script src="static/js/script.js"></script>
 </body>
 </html>

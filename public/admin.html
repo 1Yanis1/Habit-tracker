@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Habit Tracker</title>
+    <link rel="stylesheet" href="static/css/admin-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Open Admin</h2>
+            </div>
+            <nav>
+                <ul>
+                    <li onclick="showSection('dashboard')" id="nav-dashboard" class="active">📊 Dashboard</li>
+                    <li onclick="showSection('users')" id="nav-users">👥 Потребители</li>
+                    <li onclick="showSection('habits')" id="nav-habits">📅 Глобални Навици</li>
+                    <li onclick="showSection('settings')" id="nav-settings">⚙️ Настройки</li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="top-bar">
+                <span id="section-title" class="page-title">Dashboard / Статистика</span>
+                <div class="user-info">
+                    <img src="" id="admin-avatar-img" class="admin-avatar" alt="Adm">
+                    <span class="administrator-name">Administrator</span>
+                </div>
+            </header>
+
+            <div id="dashboard-section" class="admin-section">
+                <div class="dashboard-content">
+                    <div class="stats-cards">
+                        <div class="card">
+                            <h3>Всички Потребители</h3>
+                            <p id="total-users">0</p>
+                        </div>
+                        <div class="card">
+                            <h3>Активни Навици</h3>
+                            <p id="total-habits">0</p>
+                        </div>
+                    </div>
+
+                    <div class="chart-box">
+                        <h3>Ръст на потребителите</h3>
+                        <div class="chart-container" style="position: relative; height:45vh; width:100%">
+                            <canvas id="userGrowthChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="users-section" class="admin-section hidden">
+                <div class="table-actions" style="margin-bottom: 20px;">
+                    <button class="btn-new">+ Нов Потребител</button>
+                </div>
+                
+                <div class="table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Потребителско име</th>
+                                <th>Роля</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-users-list">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="habits-section" class="admin-section hidden">
+                <div class="habit-manager">
+                    <div class="top-actions">
+                        <h3>Предварително зададени навици</h3>
+                        <button class="btn-new" onclick="alert('Функцията се разработва')">+ Нов Шаблон</button>
+                    </div>
+                    <div id="global-habits-list" class="habits-grid">
+                        </div>
+                </div>
+            </div>
+
+            <div id="settings-section" class="admin-section hidden">
+                <div class="settings-box" style="max-width: 500px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <h3>Личен Профил</h3>
+                    <br>
+                    <div class="input-group" style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; color: #7f8c8d;">Потребителско име</label>
+                        <input type="text" id="admin-name-input" placeholder="Ново име..." style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <button class="btn-new" style="width: 100%;" onclick="saveSettings()">Запази Промените</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="static/js/admin-logic.js"></script>
+</body>
+</html>
