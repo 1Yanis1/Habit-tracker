@@ -20,32 +20,34 @@ async function loadHabits() {
     container.innerHTML = '';
 
     habits.forEach(habit => {
-        const id = habit.Habit_ID;
-        const name = habit.Description;
-        const goal = habit.Amount;
-        const streak = 5; 
+    const id = habit.habit_id; 
+    const name = habit.description; 
+    const goal = habit.amount;
+    const streak = 5; 
 
-        const div = document.createElement('div');
-        div.className = 'habit-card';
-        div.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items: center;">
-                <h3 style="margin:0;">${name} <span class="streak-badge">${streak} 🔥</span></h3>
-                <div>
-                    <button style="border:none; background:none; cursor:pointer;" onclick="openEditModal(${id},'${name}','${habit.Frequency_type}',${goal})">✏️</button>
-                    <button style="border:none; background:none; cursor:pointer;" onclick="askDelete(${id})">🗑️</button>
-                </div>
+    const div = document.createElement('div');
+    div.className = 'habit-card';
+    div.innerHTML = `
+        <div class="habit-header">
+            <h3 class="habit-title">${name} <span class="streak-badge">${streak} 🔥</span></h3>
+            <div class="habit-actions">
+                <button class="btn-icon" onclick="openEditModal(${id},'${name}','${habit.frequency_type}',${goal})">✏️</button>
+                <button class="btn-icon" onclick="askDelete(${id})">🗑️</button>
             </div>
-            <div class="mini-calendar">
-                ${[1,1,0,1,1,0,1].map(d => `<div class="calendar-dot ${d?'active':''}"></div>`).join('')}
-                <span style="font-size:0.7em; color:#999; margin-left:5px;">Седмичен отчет</span>
-            </div>
-            <div class="progress-container"><div id="bar-${id}" class="progress-bar"></div></div>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span id="text-${id}" style="font-size:0.8em; color:#666;">Напредък: 0/${goal}</span>
-                <button onclick="markDone(${id}, ${goal})" style="background:#3498db; color:white; border:none; padding:5px 12px; border-radius:5px; cursor:pointer; font-weight:bold;">+1</button>
-            </div>
-        `;
-        container.appendChild(div);
+        </div>
+        <div class="mini-calendar">
+            ${[1,1,0,1,1,0,1].map(d => `<div class="calendar-dot ${d ? 'active' : ''}"></div>`).join('')}
+            <span class="report-text">Седмичен отчет</span>
+        </div>
+        <div class="progress-container">
+            <div id="bar-${id}" class="progress-bar"></div>
+        </div>
+        <div class="habit-footer">
+            <span id="text-${id}" class="progress-text">Напредък: 0/${goal}</span>
+            <button class="btn-plus" onclick="markDone(${id}, ${goal})">+1</button>
+        </div>
+    `;
+    container.appendChild(div);
     });
 }
 
@@ -65,12 +67,20 @@ function markDone(id, goal) {
 
 function toggleChatbot() {
     document.getElementById('chatbot-window').classList.toggle('hidden');
+    const ChatContainer = document.getElementById('chatbot-container');
+        if (ChatContainer.style.display === 'none') {
+            ChatContainer.style.display = 'lflex';
+
+        } 
+        else {
+            ChatContainer.style.display = 'none';
+        }
 }
 
 async function sendChatMsg() {
     const input = document.getElementById('chat-input');
     const msgArea = document.getElementById('chatbot-messages');
-    const val = input.value.trim();
+    let val = input.value.trim();
     if (!val) return;
 
     
@@ -82,8 +92,14 @@ async function sendChatMsg() {
     msgArea.innerHTML += `<div class="bot-msg" id="${typingId}">🤖 Мисля...</div>`;
     msgArea.scrollTop = msgArea.scrollHeight;
 
+    
+
     try {
         
+        if (val.toLowerCase() === "идеи") { 
+        val =`Дай ми три кратки предложения за нов навик, който да развия, свързан с физическата активност.`;
+        }
+
         const res = await fetch('/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

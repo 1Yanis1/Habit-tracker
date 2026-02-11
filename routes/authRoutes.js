@@ -22,11 +22,12 @@ router.post('/login', (req, res) => {
         if (!user) return res.status(401).json({ error: 'Грешно име или парола' });
 
         
+        
         const token = jwt.sign(
-            { id: user.id, username: user.username, role: user.role }, 
-            SECRET_KEY, 
-            { expiresIn: '2h' }
-        );
+            { id: user.customer_id || user.customer_id }, 
+            process.env.SECRET_KEY,
+            { expiresIn: '1h' }
+    );
 
         
         res.cookie('token', token, {

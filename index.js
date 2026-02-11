@@ -1,11 +1,19 @@
+require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const fetch = require('node-fetch'); 
 const app = express();
-require('dotenv').config();
+const { Pool } = require('pg');
 
-const API_KEY = process.env.API_KEY; // Заменете с вашия API ключ от .env файла
-const GEMINI_URL = process.env.GEMINI_URL; // Заменете с вашия URL от .env файла
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+     }
+});
+
+const API_KEY = process.env.API_KEY; 
+const GEMINI_URL = process.env.GEMINI_URL; 
 
 const habitRoutes = require('./routes/habitRoutes');
 const authRoutes = require('./routes/authRoutes');
@@ -15,6 +23,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static('public'));
+
+pool.connect((err, client, release) => {
+    if (err) return console.error('Грешка при свързване с базата данни', err.stack);
+    console.log('Успешно свързване с базата данни');
+    release();
+});
 
 // МАРШРУТ ЗА ЧАТБОТА - ДИРЕКТНА ВРЪЗКА
 app.post('/chat', async (req, res) => {
@@ -56,5 +70,5 @@ app.get('/', (req, res) => {
 
 const PORT = 3000;
 app.listen(PORT, () => {
-    console.log(`Сървърът работи на http://localhost:${PORT}`);
+    console.log(`Сървърът работи на http://localhost:${PORT}/login.html`);
 });
