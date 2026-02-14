@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const fetch = require('node-fetch'); 
 const app = express();
 const { Pool } = require('pg');
+const path = require('path');
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -22,7 +23,7 @@ const adminRoutes = require('./routes/adminRoutes');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 pool.connect((err, client, release) => {
     if (err) return console.error('Грешка при свързване с базата данни', err.stack);
@@ -65,7 +66,7 @@ app.use(authRoutes);
 app.use('/admin', adminRoutes);
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/index.html');
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 const PORT = 3000;
