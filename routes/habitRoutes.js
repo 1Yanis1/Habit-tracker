@@ -35,4 +35,14 @@ router.put('/habits/:id', authenticateToken, (req, res) => {
     });
 });
 
+router.patch('/habits/:id/complete', authenticateToken, (req, res) => {
+    const habitID = req.params.id;
+    habitService.completeHabit(habitID, (err, result) => {
+        if (err) {
+            
+            return res.status(400).json({ error: err.message });
+        }
+        res.json({ message: 'Навикът е отбелязан!', data: result });
+    });
+});
 module.exports = router;    
