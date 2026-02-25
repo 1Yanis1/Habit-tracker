@@ -23,7 +23,7 @@ const adminRoutes = require('./routes/adminRoutes');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/static', express.static(path.join(__dirname, 'public')));
 
 pool.connect((err, client, release) => {
     if (err) return console.error('Грешка при свързване с базата данни', err.stack);
