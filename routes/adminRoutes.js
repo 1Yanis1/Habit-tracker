@@ -3,7 +3,7 @@ const router = exrpess.Router();
 const db = require('../db/connection');
 const jwt = require('jsonwebtoken');
 
-const SECRET_KEY = 'super_secret_key_12345';
+const SECRET_KEY = process.env.SECRET_KEY;
 
 const isAdmin = (req, res, next) => {
     const token = req.cookies.token;    

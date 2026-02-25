@@ -20,61 +20,76 @@ async function loadHabits() {
     container.innerHTML = '';
 
     habits.forEach(habit => {
-    const id = habit.habit_id; 
-    const name = habit.description; 
-    const goal = habit.amount;
-    const streak = 5; 
+        const id = habit.habit_id; 
+        const name = habit.description; 
+        const goal = habit.amount;
+        
+        // ВЗИМАМЕ ДАННИТЕ ОТ БАЗАТА:
+        const streak = habit.streak_count || 0; 
+        const history = habit.completion_history || [];
 
-    const div = document.createElement('div');
-    div.className = 'habit-card';
-    div.innerHTML = `
-        <div class="habit-header">
-            <h3 class="habit-title">${name} <span class="streak-badge">${streak} 🔥</span></h3>
-            <div class="habit-actions">
-                <button class="btn-icon" onclick="openEditModal(${id},'${name}','${habit.frequency_type}',${goal})">✏️</button>
-                <button class="btn-icon" onclick="askDelete(${id})">🗑️</button>
+        // Генерираме квадратчетата за последните 7 дни
+        let dotsHtml = '';
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const dateStr = d.toISOString().split('T')[0];
+            const isActive = history.some(hDate => hDate.startsWith(dateStr));
+            dotsHtml += `<div class="calendar-dot ${isActive ? 'active' : ''}"></div>`;
+        }
+
+        const div = document.createElement('div');
+        div.className = 'habit-card';
+        div.innerHTML = `
+            <div class="habit-header">
+                <h3 class="habit-title">${name} <span class="streak-badge">${streak} 🔥</span></h3>
+                <div class="habit-actions">
+                    <button class="btn-icon" onclick="openEditModal(${id},'${name}','${habit.frequency_type}',${goal})">✏️</button>
+                    <button class="btn-icon" onclick="askDelete(${id})">🗑️</button>
+                </div>
             </div>
-        </div>
-        <div class="mini-calendar">
-            ${[1,1,0,1,1,0,1].map(d => `<div class="calendar-dot ${d ? 'active' : ''}"></div>`).join('')}
-            <span class="report-text">Седмичен отчет</span>
-        </div>
-        <div class="progress-container">
-            <div id="bar-${id}" class="progress-bar"></div>
-        </div>
-        <div class="habit-footer">
-            <span id="text-${id}" class="progress-text">Напредък: 0/${goal}</span>
-            <button class="btn-plus" onclick="markDone(${id}, ${goal})">+1</button>
-        </div>
-    `;
-    container.appendChild(div);
+            <div class="mini-calendar">
+                ${dotsHtml}
+                <span class="report-text">Седмичен отчет</span>
+            </div>
+            <div class="progress-container">
+                <div id="bar-${id}" class="progress-bar" style="width: ${(streak >= goal ? 100 : (streak/goal)*100)}%"></div>
+            </div>
+            <div class="habit-footer">
+                <span id="text-${id}" class="progress-text">Общо изпълнения: ${streak}</span>
+                <button class="btn-plus" onclick="markDone(${id})">+1</button>
+            </div>
+        `;
+        container.appendChild(div);
     });
 }
 
-function markDone(id, goal) {
-    const bar = document.getElementById(`bar-${id}`);
-    const text = document.getElementById(`text-${id}`);
-    let parts = text.innerText.split(': ')[1].split('/');
-    let curr = parseInt(parts[0]);
-    if (curr < goal) {
-        curr++;
-        bar.style.width = (curr/goal)*100 + "%";
-        text.innerText = `Напредък: ${curr}/${goal}`;
-        if(curr === goal) bar.style.backgroundColor = "#27ae60";
+async function markDone(id) {
+    try {
+        const res = await fetch(`/habits/${id}/complete`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json();
+            alert(errorData.error); 
+            return;
+        }
+
+        
+        loadHabits(); 
+        
+    } catch (e) {
+        console.error("Грешка:", e);
     }
 }
 
 
 function toggleChatbot() {
-    document.getElementById('chatbot-window').classList.toggle('hidden');
-    const ChatContainer = document.getElementById('chatbot-container');
-        if (ChatContainer.style.display === 'none') {
-            ChatContainer.style.display = 'lflex';
-
-        } 
-        else {
-            ChatContainer.style.display = 'none';
-        }
+    const chatWindow = document.getElementById('chatbot-window');
+    chatWindow.classList.toggle('hidden');
+    
 }
 
 async function sendChatMsg() {
