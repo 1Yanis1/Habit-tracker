@@ -3,7 +3,7 @@ const router = express.Router();
 const authService = require('../services/authServices');
 const jwt = require('jsonwebtoken');
 
-const SECRET_KEY = 'super_secret_key_12345';
+const SECRET_KEY = process.env.SECRET_KEY;
 
 router.post('/register', (req, res) => {
     const { username, password } = req.body;
@@ -25,7 +25,7 @@ router.post('/login', (req, res) => {
         
         const token = jwt.sign(
             { id: user.customer_id || user.customer_id }, 
-            process.env.SECRET_KEY,
+                SECRET_KEY,
             { expiresIn: '1h' }
     );
 
