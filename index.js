@@ -23,7 +23,7 @@ const adminRoutes = require('./routes/adminRoutes');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use('/static', express.static(path.join(__dirname, 'public')));
+app.use('/static', express.static(path.join(__dirname, 'public', 'static')));
 
 pool.connect((err, client, release) => {
     if (err) return console.error('Грешка при свързване с базата данни', err.stack);
@@ -69,7 +69,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Сървърът работи на http://localhost:${PORT}/login.html`);
 });
